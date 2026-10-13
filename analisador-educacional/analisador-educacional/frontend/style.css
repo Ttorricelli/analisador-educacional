@@ -1,0 +1,5 @@
+body { font-family: system-ui, sans-serif; background: #f4f6f8; margin: 0; }
+main { max-width: 600px; margin: 15vh auto; text-align: center; }
+h1 { color: #1f3a5f; }
+#mensagem { font-size: 2rem; }
+.erro { color: #b00020; font-size: 1.2rem !important; }
