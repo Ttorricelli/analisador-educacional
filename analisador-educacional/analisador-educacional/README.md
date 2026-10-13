@@ -1,20 +1,22 @@
 # Analisador Educacional
 
-Software educacional para apoiar o estudo das análises **léxica, sintática e semântica** de uma linguagem de programação.
+Software educacional interativo para apoiar o estudo das análises **sintática e semântica** (precedidas da análise léxica) de compiladores, voltado a estudantes de graduação em Ciência da Computação. A ferramenta busca tornar visíveis as árvores de derivação e as regras semânticas durante a análise de expressões, aproximando a teoria formal da prática.
 
 > **Status:** Etapa 1 — estrutura inicial, ambiente Docker e "Hello, World!".
 
 ## Linguagem escolhida e escopo
 
-- **Linguagem analisada:** C
+- **Linguagem analisada:** Python
 - **Subconjunto inicial (a ser implementado nas próximas etapas):**
-  - declaração de variáveis dos tipos `int` e `float`;
-  - atribuições;
+  - números inteiros e decimais;
+  - variáveis (identificadores) e atribuição simples, como `x = 5`;
   - operadores aritméticos (`+`, `-`, `*`, `/`) e parênteses;
-  - estrutura condicional `if` / `else`;
-  - operadores relacionais (`<`, `>`, `<=`, `>=`, `==`, `!=`).
-- **Por que essa escolha:** C possui sintaxe pequena e bem definida, tipagem estática e é amplamente usada no ensino de compiladores, o que facilita exemplos claros de erros léxicos, sintáticos e semânticos (ex.: variável não declarada, tipos incompatíveis). Limitar o escopo evita tornar o projeto inviável; novas construções (`while`, `for`, funções) poderão ser acrescentadas depois.
-
+  - operadores de comparação (`<`, `>`, `<=`, `>=`, `==`, `!=`);
+  - estrutura condicional `if` / `else` (em etapa posterior).
+- **Por que essa escolha:** Python tem sintaxe legível e é amplamente adotada em disciplinas de base, o que reduz a barreira técnica de entrada e permite focar na complexidade lógica da matéria. Limitar o escopo a expressões e atribuições evita tornar o projeto inviável, e novas construções poderão ser acrescentadas depois.
+- **Exemplos de análise previstos:** erros sintáticos (parênteses não fechados, operador sem operando) e semânticos (variável usada antes de ser atribuída, divisão por zero literal).
+- **Tecnologia de implementação:** backend em Python (FastAPI) e frontend em HTML/JavaScript.
+- 
 ## Arquitetura
 
 ```
