@@ -92,4 +92,4 @@ Checklist executado seguindo os comandos deste README:
 
 ## Autor
 
-Seu Nome — Professor com acesso ao repositório: `rocha3runo`
+Tatielly C Leal de Araújo — Professor com acesso ao repositório: `rocha3runo`
