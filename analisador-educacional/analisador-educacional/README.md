@@ -15,8 +15,6 @@ Software educacional para apoiar o estudo das análises **léxica, sintática e 
   - operadores relacionais (`<`, `>`, `<=`, `>=`, `==`, `!=`).
 - **Por que essa escolha:** C possui sintaxe pequena e bem definida, tipagem estática e é amplamente usada no ensino de compiladores, o que facilita exemplos claros de erros léxicos, sintáticos e semânticos (ex.: variável não declarada, tipos incompatíveis). Limitar o escopo evita tornar o projeto inviável; novas construções (`while`, `for`, funções) poderão ser acrescentadas depois.
 
-> Ajuste esta seção se você escolher outra linguagem ou subconjunto.
-
 ## Arquitetura
 
 ```
@@ -56,8 +54,8 @@ docker compose version
 ## Como executar
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd analisador-educacional
+git clone https://github.com/Ttorricelli/analisador-educacional.git
+cd analisador-educacional/analisador-educacional/analisador-educacional
 docker compose up --build
 ```
 
@@ -79,19 +77,19 @@ Para remover também imagens construídas: `docker compose down --rmi local`.
 
 ## Validação de instalação limpa
 
-Checklist executado seguindo apenas este README:
+Checklist executado seguindo os comandos deste README:
 
-- [ ] `git clone` em uma pasta nova
-- [ ] `docker compose up --build` sem erros
-- [ ] <http://localhost:8080> exibe "Hello, World!"
-- [ ] `docker compose down` encerra os contêineres
-- [ ] Testado em: _(sistema operacional / versões do Docker)_
+- [x] `docker compose up --build` sem erros
+- [x] <http://localhost:8080> exibe "Hello, World!"
+- [x] `docker compose down` encerra os contêineres
+- [x] Testado em: Windows com Docker Desktop 4.95.0
 
 ## Solução de problemas
 
 - **Porta em uso:** altere o mapeamento de portas em `docker-compose.yml` (ex.: `"8081:80"`).
 - **Página mostra "Erro ao falar com o backend":** veja `docker compose logs backend`.
+- **"no configuration file provided":** você está na pasta errada; entre na pasta que contém o `docker-compose.yml`.
 
 ## Autor
 
-_Seu nome_ — Professor com acesso ao repositório: `rocha3runo`
+Seu Nome — Professor com acesso ao repositório: `rocha3runo`
