@@ -1,172 +1,165 @@
 # Simulador Educacional de Compiladores — Python
 
-## Objetivo e escopo da Etapa 3
+## Objetivo
 
-Aplicação educacional que recebe um trecho de código Python e executa **análise léxica (scanner)**. O scanner percorre os caracteres, agrupa lexemas, classifica tokens e informa a linha e a coluna. Ele **não** executa o código e não verifica se a estrutura sintática está correta.
+Aplicação educacional que recebe um trecho de código de um subconjunto de Python e apresenta sua **análise léxica**, **análise sintática** e **Árvore Sintática Abstrata (AST)**. O simulador não executa o código-fonte nem avalia os resultados das expressões.
 
-O subconjunto anterior continua sendo usado nos exemplos (atribuição, expressões aritméticas e `print()`), mas o scanner reconhece também categorias léxicas comuns de Python para permitir experimentação. A análise sintática será desenvolvida na Etapa 4.
+O projeto foi desenvolvido em etapas. A Etapa 4 acrescenta o parser e a construção da AST, preservando a análise léxica, a API e a interface das etapas anteriores.
 
-## Subconjunto léxico documentado
+## Escopo da linguagem reconhecida
 
-| Categoria | Regra / exemplos |
-|---|---|
-| Palavras reservadas | Palavras-chave do Python, como `if`, `else`, `while`, `return`, `def`, `and`, `or`, `not`, `True`, `False` e `None`. São classificadas como `PALAVRA_RESERVADA`. |
-| Identificadores | Começam com letra ou `_`; continuam com letras, dígitos ou `_`. Exemplos: `nome`, `_x1`, `resultado2`. |
-| Inteiros | Uma sequência de dígitos: `0`, `10`, `2048`. Categoria `LITERAL_INTEIRO`. |
-| Reais | Dígitos, ponto e dígitos, por exemplo `3.14`. Categoria `LITERAL_REAL`. |
-| Strings | Texto entre aspas simples ou duplas, como `'oi'` e `"Olá"`. Categoria `LITERAL_STRING`. Aspas triplas e strings multilinha não fazem parte do escopo. |
-| Operadores aritméticos | `+`, `-`, `*`, `/`, `//`, `%`, `**`. |
-| Operadores relacionais | `==`, `!=`, `<`, `<=`, `>`, `>=`. |
-| Atribuição e operadores compostos | `=`, `+=`, `-=`, `*=`, `/=`, `//=`, `%=`, `**=`, `&=`, `|=`, `^=`, `<<=`, `>>=`. |
-| Outros operadores reconhecidos | `&`, `|`, `^`, `~`, `<<`, `>>`. |
-| Delimitadores | `(`, `)`, `[`, `]`, `{`, `}`, `.`, `,`, `:`, `;`. |
-| Comentários | Comentários de linha iniciados por `#`; são ignorados. Python não possui sintaxe específica de comentário de bloco, portanto ela não é implementada. |
-| Espaços em branco | Espaços, tabulações, retornos e quebras de linha são ignorados como tokens; linha e coluna são atualizadas. |
-| Caracteres/sequências inválidas | Produzem erros léxicos com trecho, linha, coluna e mensagem. O scanner continua para encontrar outros erros quando possível. |
+O scanner identifica categorias léxicas comuns de Python, incluindo:
 
-Nomes de tokens usados pela API: `PALAVRA_RESERVADA`, `IDENTIFICADOR`, `LITERAL_INTEIRO`, `LITERAL_REAL`, `LITERAL_STRING`, `OPERADOR` e `DELIMITADOR`. Erros usam `ERRO_LEXICO`.
+- palavras reservadas;
+- identificadores;
+- literais inteiros, reais e strings;
+- operadores aritméticos, relacionais, de atribuição e outros operadores;
+- delimitadores;
+- comentários de linha, que são ignorados;
+- espaços em branco e quebras de linha, que não são emitidos como tokens.
+
+Caracteres ou sequências não reconhecidas geram erros léxicos com localização. A análise sintática, por sua vez, aceita o subconjunto educacional descrito abaixo.
+
+### Subconjunto sintático da Etapa 4
+
+O parser é descendente recursivo e analisa cada instrução em uma linha independente. São reconhecidas:
+
+- atribuições simples, no formato `identificador = expressão`;
+- chamadas de `print(...)`, com zero ou mais argumentos;
+- identificadores e literais inteiros, reais e strings;
+- expressões entre parênteses;
+- operadores unários `+` e `-`;
+- operadores binários `*`, `/`, `%`, `+` e `-`, respeitando a precedência usual.
+
+A gramática completa do subconjunto está em [`docs/gramatica_ebnf.md`](docs/gramatica_ebnf.md).
+
+**Limitações:** o projeto não implementa Python completo. Não são reconhecidos blocos indentados, condicionais, laços, definições de função, listas, dicionários, chamadas genéricas de função ou expressões distribuídas por várias linhas.
 
 ## Tecnologias
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | HTML, CSS e JavaScript puro, servido por nginx |
-| Backend | Python 3.11, FastAPI e uvicorn |
-| Scanner | Módulo Python próprio (`backend/scanner.py`), sem dependência externa |
-| Testes backend | pytest + httpx / TestClient |
-| Testes frontend | Node.js `node:test`, sem dependências externas |
+| Frontend | HTML, CSS e JavaScript puro |
+| Servidor da interface e proxy | Nginx |
+| Backend | Python 3.11, FastAPI e Uvicorn |
+| Análise léxica | Scanner próprio em Python |
+| Análise sintática | Parser descendente recursivo em Python |
+| AST | Estruturas de nós próprias, serializadas em JSON |
+| Testes backend | pytest e httpx / TestClient |
+| Testes frontend | Node.js `node:test` |
 | Ambiente | Docker Compose |
 
 ## Como executar
 
-Pré-requisitos: Docker com Docker Compose. Na raiz do projeto:
+Pré-requisito: Docker com Docker Compose instalado.
+
+Na pasta que contém `docker-compose.yml`, execute:
 
 ```bash
 docker compose up --build -d
 ```
 
-Acesse <http://localhost:8080>. Para encerrar:
+Acesse a interface em:
+
+<http://localhost:8080>
+
+A documentação interativa da API fica disponível em:
+
+<http://localhost:8000/docs>
+
+Para encerrar os serviços:
 
 ```bash
 docker compose down
 ```
 
-A API pode ser acessada diretamente em <http://localhost:8000/docs>. A interface chama `/api/analisar` pela mesma origem e o nginx encaminha a requisição para o backend.
+## Como utilizar
 
-## Como usar
+1. Abra a interface no navegador.
+2. Escreva um trecho de código no editor ou selecione um exemplo.
+3. Clique em **Analisar código**.
+4. Consulte a tabela de tokens e os eventuais erros léxicos.
+5. Se não houver erros léxicos, consulte o resultado da análise sintática.
+6. Quando a estrutura estiver correta, a interface apresenta a AST em formato hierárquico.
 
-1. Escreva código no editor ou selecione um exemplo.
-2. Clique em **Analisar código**.
-3. Consulte a tabela de tokens (tipo, lexema, linha e coluna) e a seção de erros léxicos.
-4. Para cada erro, confira a linha e coluna indicadas. O código com erro léxico não interrompe a aplicação e os tokens restantes continuam sendo apresentados.
+**Token** é uma unidade reconhecida pelo scanner; **lexema** é o texto exato encontrado no código. A análise léxica pode reconhecer os tokens de uma entrada que depois seja rejeitada pelo parser por erro sintático.
 
-**Token** é a unidade reconhecida pelo scanner; **lexema** é a sequência exata de caracteres que formou aquele token. Um programa pode ser tokenizado mesmo que tenha um erro sintático, porque o parser ainda não faz parte desta etapa.
-
-## Contrato da API
+## API
 
 ### `POST /api/analisar`
 
-Requisição JSON:
-
-```json
-{ "codigo": "x = 10\nprint(x)" }
-```
-
-Resposta HTTP `200`, quando não há erros léxicos:
+Recebe um JSON com o campo `codigo`:
 
 ```json
 {
-  "recebido": true,
-  "mensagem": "Código recebido com sucesso.",
-  "linhas": 2,
-  "caracteres": 15,
-  "sucesso": true,
-  "tokens": [
-    { "tipo": "IDENTIFICADOR", "lexema": "x", "linha": 1, "coluna": 1 },
-    { "tipo": "OPERADOR", "lexema": "=", "linha": 1, "coluna": 3 },
-    { "tipo": "LITERAL_INTEIRO", "lexema": "10", "linha": 1, "coluna": 5 }
-  ],
-  "erros": []
+  "codigo": "x = 10 + 5 * 2"
 }
 ```
 
-Resposta HTTP `200` com erro léxico para o código `@` (a requisição foi recebida, mas a análise encontrou problema):
+A resposta contém os dados da análise léxica (`sucesso`, `tokens` e `erros`) e o campo `analise_sintatica`, com o resultado sintático (`sucesso`, `erros` e `ast`). A análise sintática só é executada quando não há erros léxicos.
 
-```json
-{
-  "recebido": true,
-  "mensagem": "Código recebido com sucesso.",
-  "sucesso": false,
-  "tokens": [],
-  "erros": [
-    {
-      "tipo": "ERRO_LEXICO",
-      "lexema": "@",
-      "linha": 1,
-      "coluna": 5,
-      "mensagem": "Caractere não reconhecido: '@'. Verifique se ele faz parte do subconjunto suportado."
-    }
-  ]
-}
-```
+Endpoints preservados:
 
-O exemplo de erro é ilustrativo; a resposta real também inclui `linhas` e `caracteres`, e mantém todos os tokens que puderam ser reconhecidos.
-
-| Situação | HTTP | Comportamento |
-|---|---:|---|
-| Análise sem erros léxicos | 200 | `recebido: true`, `sucesso: true`, lista `tokens` e `erros: []` |
-| Erros léxicos | 200 | `recebido: true`, `sucesso: false`, tokens encontrados e lista de erros |
-| Código vazio ou só espaços | 422 | Contrato de validação mantido da Etapa 2 |
-| JSON inválido / `codigo` ausente ou com tipo incorreto | 422 | `erro.tipo: requisicao_invalida` |
-| Mais de 20.000 caracteres | 413 | `erro.tipo: entrada_muito_grande` |
-| Erro interno inesperado | 500 | Mensagem genérica, sem detalhes internos |
-
-Endpoints preservados: `GET /api/saude` e `GET /api/hello`.
+- `GET /api/saude`: verificação de saúde do backend.
+- `GET /api/hello`: endpoint mantido para regressão da integração.
 
 ## Testes automatizados
 
-Na raiz do projeto, execute:
+Backend:
 
 ```bash
 cd backend
 pip install -r requirements-dev.txt
 python -m pytest -v
-cd ../frontend
+```
+
+Frontend:
+
+```bash
+cd frontend
 npm test
 ```
 
-Para verificar a implantação integrada com Docker:
+Verificação integrada do ambiente:
 
 ```bash
 bash scripts/validar_ambiente.sh
 ```
 
-O registro das execuções feitas durante a preparação está em [`docs/testes.md`](docs/testes.md). Execute também os comandos no seu ambiente antes de entregar, especialmente o teste de Docker.
+O registro dos testes automatizados e manuais está em [`docs/testes.md`](docs/testes.md). Os casos manuais estão detalhados em [`docs/casos_de_teste.md`](docs/casos_de_teste.md).
 
-## Estrutura principal
+## Estrutura do projeto
 
 ```text
-backend/
-  main.py                 API e endpoints
-  validacao.py            validação de entrada da Etapa 2
-  scanner.py              análise léxica
-  tests/                  testes de API, validação e scanner
-frontend/
-  index.html              interface
-  js/app.js               apresentação dos resultados
-  js/logica.js            comunicação com a API
-  js/exemplos.js          exemplos de código
-  tests/                  testes de frontend e regressão
-docs/
-  testes.md               registro de testes
-scripts/
-  validar_ambiente.sh     teste integrado do ambiente
+simulador-compilador-etapa4/
+├── backend/
+│   ├── main.py
+│   ├── validacao.py
+│   ├── scanner.py
+│   ├── parser.py
+│   ├── ast_nodes.py
+│   └── tests/
+├── frontend/
+│   ├── index.html
+│   ├── js/
+│   └── tests/
+├── docs/
+│   ├── arquitetura.md
+│   ├── casos_de_teste.md
+│   ├── etapa4.md
+│   ├── fluxograma.md
+│   ├── gramatica_ebnf.md
+│   └── testes.md
+├── scripts/
+├── docker-compose.yml
+└── README.md
 ```
 
-## Limitações conhecidas e próximas etapas
+## Documentação complementar
 
-- O scanner reconhece tokens; não constrói árvore sintática nem verifica a validade das instruções.
-- Strings multilinha/aspas triplas, comentários de bloco, interpolação de strings e todos os detalhes avançados da gramática Python estão fora do escopo.
-- O scanner não executa o programa nem avalia expressões.
-- A análise sintática (parser) será tratada na Etapa 4.
-- Os testes da interface usam DOM simulado; ainda é recomendável realizar um teste manual no navegador com Docker Compose.
+- [`docs/etapa4.md`](docs/etapa4.md): escopo e implementação da Etapa 4.
+- [`docs/gramatica_ebnf.md`](docs/gramatica_ebnf.md): gramática formal do subconjunto.
+- [`docs/arquitetura.md`](docs/arquitetura.md): componentes e comunicação do sistema.
+- [`docs/fluxograma.md`](docs/fluxograma.md): sequência de processamento.
+- [`docs/casos_de_teste.md`](docs/casos_de_teste.md): casos de teste manuais.
+- [`docs/testes.md`](docs/testes.md): registro das verificações automatizadas e manuais.
