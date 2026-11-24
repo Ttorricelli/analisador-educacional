@@ -96,7 +96,7 @@ Recebe um JSON com o campo `codigo`:
 }
 ```
 
-A resposta contém os dados da análise léxica (`sucesso`, `tokens` e `erros`) e o campo `analise_sintatica`, com o resultado sintático (`sucesso`, `erros` e `ast`). A análise sintática só é executada quando não há erros léxicos.
+A resposta contém os dados da análise léxica (`sucesso`, `tokens` e `erros`) e o campo `analise_sintatica`, com o resultado sintático (`sucesso`, `erros` e `ast`). Cada erro sintático inclui `linha`, `coluna`, `esperado` e `encontrado`. A AST contém posições de início/fim dos nós; quando há erro sintático, `ast` é `null`. A análise sintática só é executada quando não há erros léxicos.
 
 Endpoints preservados:
 
